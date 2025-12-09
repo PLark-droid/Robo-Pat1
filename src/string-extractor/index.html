@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robo-Pat用 文字列抽出JavaScript生成ツール</title>
+    <title>文字列抽出JS生成ツール | Robo-Pat DX</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,97 +12,209 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background: #f5f5f5;
             min-height: 100vh;
-            padding: 20px;
+            color: #32373c;
         }
 
+        /* ヘッダー */
+        .header {
+            background: white;
+            border-bottom: 3px solid #ff5062;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo img {
+            height: 36px;
+        }
+
+        .header-logo-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #32373c;
+        }
+
+        .header-logo-text span {
+            color: #ff5062;
+        }
+
+        .header-title {
+            font-size: 1rem;
+            color: #6c757d;
+            padding-left: 16px;
+            border-left: 1px solid #ddd;
+        }
+
+        /* メインコンテンツ */
         .container {
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
+            padding: 24px;
         }
 
-        h1 {
-            color: white;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 1.8rem;
+        .page-title {
+            color: #32373c;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
         }
 
-        .subtitle {
-            color: rgba(255, 255, 255, 0.8);
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 0.95rem;
+        .page-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
         }
 
+        /* カード */
         .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 8px;
             padding: 24px;
             margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
         }
 
         .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 16px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #32373c;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #ff5062;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .card-title .icon {
-            font-size: 1.3rem;
+        .card-title-icon {
+            width: 24px;
+            height: 24px;
+            background: #ff5062;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
         }
 
-        .form-group {
+        /* フロー説明 */
+        .flow-box {
+            background: #fff8f8;
+            border: 1px solid #ffcdd2;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .flow-title {
+            font-weight: bold;
+            color: #ff5062;
             margin-bottom: 16px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-steps {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid #ffcdd2;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .flow-step .step-num {
+            background: #ff5062;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .flow-step .step-text {
+            font-size: 0.85rem;
+            color: #32373c;
+            line-height: 1.4;
+        }
+
+        .flow-arrow {
+            color: #ff5062;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .flow-steps {
+                flex-direction: column;
+            }
+            .flow-arrow {
+                transform: rotate(90deg);
+                justify-content: center;
+            }
+        }
+
+        /* フォーム */
+        .form-group {
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            font-weight: 500;
-            color: #555;
-            margin-bottom: 6px;
+            font-weight: bold;
+            color: #32373c;
+            margin-bottom: 8px;
             font-size: 0.9rem;
         }
 
-        input[type="text"], textarea {
+        input[type="text"] {
             width: 100%;
             padding: 12px 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             font-size: 1rem;
             transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fafafa;
         }
 
-        input[type="text"]:focus, textarea:focus {
+        input[type="text"]:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-        }
-
-        /* プレースホルダー風の入力欄 */
-        .placeholder-input input {
-            color: #333;
+            border-color: #ff5062;
+            box-shadow: 0 0 0 3px rgba(255, 80, 98, 0.15);
+            background: white;
         }
 
         .placeholder-input input.is-placeholder {
             color: #999;
-        }
-
-        .placeholder-input input.is-placeholder:focus {
-            color: #333;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
         }
 
         .input-row {
@@ -117,14 +229,57 @@
             }
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+        /* チェックボックス */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 8px;
+            background: #fafafa;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.2s;
+            font-size: 0.9rem;
+            color: #32373c;
+            padding: 6px 12px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .checkbox-label:hover {
+            border-color: #ff5062;
+        }
+
+        .checkbox-label:has(input:checked) {
+            border-color: #ff5062;
+            background: #fff8f8;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #ff5062;
+        }
+
+        /* ボタン */
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s, background 0.2s;
         }
 
         .btn:hover {
@@ -136,93 +291,33 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ff5062;
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(255, 80, 98, 0.3);
         }
 
         .btn-primary:hover {
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
+            background: #e8455a;
+            box-shadow: 0 6px 16px rgba(255, 80, 98, 0.4);
         }
 
         .btn-group {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
-        }
-
-        .flow-box {
-            background: linear-gradient(135deg, #e0f7fa 0%, #e8f5e9 100%);
-            border: 1px solid #4db6ac;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .flow-title {
-            font-weight: 600;
-            color: #00796b;
-            margin-bottom: 12px;
-            font-size: 1rem;
-        }
-
-        .flow-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .flow-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 10px 12px;
-            background: white;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-
-        .flow-step .step-num {
-            background: #667eea;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 600;
-            flex-shrink: 0;
         }
 
-        .flow-step .step-text {
-            color: #333;
-            line-height: 1.5;
-        }
-
-        .flow-step .step-text strong {
-            color: #667eea;
-        }
-
+        /* コード出力 */
         .code-output {
-            background: #1e1e1e;
-            border-radius: 8px;
+            background: #2d2d2d;
+            border-radius: 6px;
             padding: 16px;
             position: relative;
         }
 
         .code-output pre {
-            color: #d4d4d4;
+            color: #f8f8f2;
             font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
             font-size: 0.85rem;
             line-height: 1.6;
@@ -235,51 +330,67 @@
             position: absolute;
             top: 12px;
             right: 12px;
-            background: #333;
-            color: #fff;
-            border: 1px solid #555;
-            padding: 6px 12px;
+            background: #ff5062;
+            color: white;
+            border: none;
+            padding: 8px 16px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: bold;
             cursor: pointer;
             transition: background 0.2s;
         }
 
         .copy-btn:hover {
-            background: #444;
+            background: #e8455a;
         }
 
         .copy-btn.copied {
-            background: #10b981;
-            border-color: #10b981;
+            background: #2CA8FF;
         }
 
+        /* インフォボックス */
         .info-box {
-            background: #e0f2fe;
-            border: 1px solid #0ea5e9;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-top: 16px;
+            background: #e3f2fd;
+            border-left: 4px solid #2CA8FF;
+            border-radius: 0 6px 6px 0;
+            padding: 14px 16px;
             font-size: 0.85rem;
-            color: #0369a1;
+            color: #1565c0;
+        }
+
+        .info-box strong {
+            color: #0d47a1;
         }
 
         .info-box.warning {
-            background: #fef3c7;
-            border-color: #f59e0b;
-            color: #92400e;
+            background: #fff8e1;
+            border-left-color: #FFB236;
+            color: #f57c00;
         }
 
-        /* 生成完了通知 */
+        .info-box.warning strong {
+            color: #e65100;
+        }
+
+        .info-box code {
+            background: rgba(0,0,0,0.08);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85em;
+        }
+
+        /* トースト */
         .toast {
             position: absolute;
-            background: #10b981;
+            background: #2CA8FF;
             color: white;
             padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            font-weight: 600;
-            font-size: 0.95rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 16px rgba(44, 168, 255, 0.4);
+            font-weight: bold;
+            font-size: 0.9rem;
             z-index: 1000;
             opacity: 0;
             transform: translateY(-10px);
@@ -292,91 +403,61 @@
             transform: translateY(0);
         }
 
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 24px;
-            margin-top: 8px;
+        /* フッター */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #6c757d;
+            font-size: 0.8rem;
         }
 
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #333;
+        .footer a {
+            color: #ff5062;
+            text-decoration: none;
         }
 
-        .checkbox-label input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: #667eea;
-        }
-
-        .tab-container {
-            margin-bottom: 16px;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #e0e0e0;
-            gap: 4px;
-        }
-
-        .tab {
-            padding: 10px 20px;
-            background: none;
-            border: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: #666;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            transition: color 0.2s, border-color 0.2s;
-        }
-
-        .tab:hover {
-            color: #333;
-        }
-
-        .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
-
-        .tab-content {
-            display: none;
-            padding-top: 16px;
-        }
-
-        .tab-content.active {
-            display: block;
+        .footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-logo">
+            <img src="https://fce-pat.co.jp/_pack/img/cmn_sitelogo_01.png" alt="Robo-Pat DX" onerror="this.style.display='none'">
+            <div class="header-logo-text">RPA <span>Robo-Pat DX</span></div>
+        </div>
+        <div class="header-title">文字列抽出JavaScript生成ツール</div>
+    </header>
+
     <div class="container">
-        <h1>Robo-Pat用 文字列抽出JS生成ツール</h1>
-        <p class="subtitle">Robo-Pat変数に格納された文字列から、開始・終了文字列の間を抽出するJavaScriptを生成</p>
+        <h1 class="page-title">文字列抽出JS生成ツール</h1>
+        <p class="page-description">Robo-Pat変数に格納された文字列から、開始・終了文字列の間を抽出するJavaScriptを生成します</p>
 
         <!-- 処理フロー説明 -->
         <div class="flow-box">
-            <div class="flow-title">Robo-Patでの処理フロー</div>
+            <div class="flow-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff5062" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12,6 12,12 16,14"></polyline>
+                </svg>
+                Robo-Patでの処理フロー
+            </div>
             <div class="flow-steps">
                 <div class="flow-step">
                     <span class="step-num">1</span>
-                    <span class="step-text">Robo-Patで対象テキストを<strong>変数に格納</strong>（文字列取得コマンド等）</span>
+                    <span class="step-text">対象テキストを<br><strong>変数に格納</strong></span>
                 </div>
+                <div class="flow-arrow">→</div>
                 <div class="flow-step">
                     <span class="step-num">2</span>
-                    <span class="step-text">生成した<strong>JavaScriptを実行</strong>（変数から抽出）</span>
+                    <span class="step-text">生成した<br><strong>JSを実行</strong></span>
                 </div>
+                <div class="flow-arrow">→</div>
                 <div class="flow-step">
                     <span class="step-num">3</span>
-                    <span class="step-text">抽出結果が<strong>出力変数に格納</strong>される</span>
+                    <span class="step-text">抽出結果が<br><strong>変数に格納</strong></span>
                 </div>
             </div>
         </div>
@@ -384,34 +465,34 @@
         <!-- 入力設定カード -->
         <div class="card">
             <div class="card-title">
-                <span class="icon">⚙️</span>
+                <span class="card-title-icon">1</span>
                 抽出設定
             </div>
 
             <div class="input-row">
                 <div class="form-group placeholder-input">
-                    <label for="stringA">開始文字列 (文字列A)</label>
+                    <label for="stringA">開始文字列</label>
                     <input type="text" id="stringA" class="is-placeholder" data-placeholder="【開始】">
                 </div>
                 <div class="form-group placeholder-input">
-                    <label for="stringB">終了文字列 (文字列B)</label>
+                    <label for="stringB">終了文字列</label>
                     <input type="text" id="stringB" class="is-placeholder" data-placeholder="【終了】">
                 </div>
             </div>
 
             <div class="input-row">
                 <div class="form-group placeholder-input">
-                    <label for="inputVarName">入力変数名（抽出元テキスト）</label>
+                    <label for="inputVarName">入力変数名（抽出元）</label>
                     <input type="text" id="inputVarName" class="is-placeholder" data-placeholder="入力テキスト">
                 </div>
                 <div class="form-group placeholder-input">
-                    <label for="variableName">出力変数名（抽出結果格納先）</label>
+                    <label for="variableName">出力変数名（結果格納先）</label>
                     <input type="text" id="variableName" class="is-placeholder" data-placeholder="抽出結果">
                 </div>
             </div>
 
             <div class="form-group">
-                <label>除外する文字（チェックした文字を抽出結果から除去）</label>
+                <label>除外する文字</label>
                 <div class="checkbox-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="removeQuotes" checked>
@@ -437,7 +518,7 @@
             </div>
 
             <div class="btn-group" style="position: relative;">
-                <button class="btn btn-primary" onclick="generateCode(event)">
+                <button class="btn btn-primary" onclick="generateCode()">
                     JavaScript生成
                 </button>
                 <div id="toast" class="toast">生成完了!</div>
@@ -447,13 +528,13 @@
         <!-- 生成コードカード -->
         <div class="card">
             <div class="card-title">
-                <span class="icon">💻</span>
-                生成されたJavaScript（Robo-Pat用）
+                <span class="card-title-icon">2</span>
+                生成されたJavaScript
             </div>
 
-            <div class="info-box" style="margin-bottom: 12px;">
+            <div class="info-box" style="margin-bottom: 16px;">
                 <strong>使い方:</strong>
-                Robo-Patで入力変数にテキストを格納 → このJavaScriptを実行 → 出力変数から結果を取得
+                Robo-Patで入力変数にテキストを格納 → このJavaScriptを実行 → 結果を取得
             </div>
 
             <div class="code-output">
@@ -462,13 +543,17 @@
             </div>
 
             <div class="info-box warning" style="margin-top: 16px;">
-                <strong>Robo-Patでの使用手順:</strong><br>
+                <strong>Robo-Patでの実行手順:</strong><br>
                 1. 「文字列取得」等で対象テキストを変数に格納<br>
                 2. 上記JavaScriptを「JavaScript実行」コマンドで実行<br>
                 3. 結果（戻り値）が指定した変数に格納されます
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <p>Robo-Pat DX 文字列抽出ツール | <a href="https://fce-pat.co.jp/" target="_blank">FCE Process & Technology</a></p>
+    </footer>
 
     <script>
         // プレースホルダー風入力欄の初期化
@@ -509,15 +594,6 @@
             return input.value;
         }
 
-        // タブ切り替え
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-        }
-
         // 文字列をエスケープ
         function escapeString(str) {
             return str
@@ -527,11 +603,6 @@
                 .replace(/\n/g, '\\n')
                 .replace(/\r/g, '\\r')
                 .replace(/\t/g, '\\t');
-        }
-
-        // 正規表現用にエスケープ
-        function escapeRegex(str) {
-            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
         // コード生成
@@ -548,8 +619,6 @@
 
             const escapedA = escapeString(stringA);
             const escapedB = escapeString(stringB);
-
-            // 変数名をエスケープ（vars['変数名']形式で使用するため）
             const escapedInputVar = escapeString(inputVarName);
 
             // チェックボックスの状態を取得
@@ -587,7 +656,7 @@
                 ? `// 除去: ${removeItems.join('、')}`
                 : '// 除去なし';
 
-            // メインコード: Robo-Pat変数から抽出
+            // メインコード
             const mainCode = `// Robo-Pat用: 変数「${inputVarName}」から「${stringA}」～「${stringB}」間を抽出
 // 入力: vars['${escapedInputVar}']
 // 出力: 最後の式の値（抽出結果）がRobo-Pat変数に格納されます
@@ -612,23 +681,20 @@ ${removeCode ? `    result = result${removeCode};\n` : ''}
     return result;
 })();`;
 
-            // コードを表示
             document.getElementById('code-main').textContent = mainCode;
 
-            // info-boxの変数名も更新
             const infoBox = document.querySelector('.info-box.warning');
             if (infoBox) {
-                infoBox.innerHTML = `<strong>Robo-Patでの使用手順:</strong><br>
+                infoBox.innerHTML = `<strong>Robo-Patでの実行手順:</strong><br>
                 1. 「文字列取得」等で対象テキストを変数 <code>${escapeHtml(inputVarName)}</code> に格納<br>
                 2. 上記JavaScriptを「JavaScript実行」コマンドで実行<br>
                 3. 結果（戻り値）が指定した変数に格納されます`;
             }
 
-            // 生成完了通知を表示
             showToast();
         }
 
-        // トースト通知を表示（ボタンの右側に表示）
+        // トースト通知を表示
         function showToast() {
             const toast = document.getElementById('toast');
             toast.style.left = '180px';
