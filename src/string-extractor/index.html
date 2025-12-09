@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robo-Pat用 文字列抽出JavaScript生成ツール</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .icon {
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        /* プレースホルダー風の入力欄 */
+        .placeholder-input input {
+            color: #333;
+        }
+
+        .placeholder-input input.is-placeholder {
+            color: #999;
+        }
+
+        .placeholder-input input.is-placeholder:focus {
+            color: #333;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, #e0f7fa 0%, #e8f5e9 100%);
+            border: 1px solid #4db6ac;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .flow-title {
+            font-weight: 600;
+            color: #00796b;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 12px;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .flow-step .step-num {
+            background: #667eea;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .flow-step .step-text {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .flow-step .step-text strong {
+            color: #667eea;
+        }
+
+        .code-output {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .code-output pre {
+            color: #d4d4d4;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #444;
+        }
+
+        .copy-btn.copied {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .info-box {
+            background: #e0f2fe;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: #0369a1;
+        }
+
+        .info-box.warning {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        /* 生成完了通知 */
+        .toast {
+            position: absolute;
+            background: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            font-size: 0.95rem;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tab-container {
+            margin-bottom: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            gap: 4px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .tab:hover {
+            color: #333;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            padding-top: 16px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Robo-Pat用 文字列抽出JS生成ツール</h1>
+        <p class="subtitle">Robo-Pat変数に格納された文字列から、開始・終了文字列の間を抽出するJavaScriptを生成</p>
+
+        <!-- 処理フロー説明 -->
+        <div class="flow-box">
+            <div class="flow-title">Robo-Patでの処理フロー</div>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <span class="step-num">1</span>
+                    <span class="step-text">Robo-Patで対象テキストを<strong>変数に格納</strong>（文字列取得コマンド等）</span>
+                </div>
+                <div class="flow-step">
+                    <span class="step-num">2</span>
+                    <span class="step-text">生成した<strong>JavaScriptを実行</strong>（変数から抽出）</span>
+                </div>
+                <div class="flow-step">
+                    <span class="step-num">3</span>
+                    <span class="step-text">抽出結果が<strong>出力変数に格納</strong>される</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 入力設定カード -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">⚙️</span>
+                抽出設定
+            </div>
+
+            <div class="input-row">
+                <div class="form-group placeholder-input">
+                    <label for="stringA">開始文字列 (文字列A)</label>
+                    <input type="text" id="stringA" class="is-placeholder" data-placeholder="【開始】">
+                </div>
+                <div class="form-group placeholder-input">
+                    <label for="stringB">終了文字列 (文字列B)</label>
+                    <input type="text" id="stringB" class="is-placeholder" data-placeholder="【終了】">
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="form-group placeholder-input">
+                    <label for="inputVarName">入力変数名（抽出元テキスト）</label>
+                    <input type="text" id="inputVarName" class="is-placeholder" data-placeholder="入力テキスト">
+                </div>
+                <div class="form-group placeholder-input">
+                    <label for="variableName">出力変数名（抽出結果格納先）</label>
+                    <input type="text" id="variableName" class="is-placeholder" data-placeholder="抽出結果">
+                </div>
+            </div>
+
+            <div class="btn-group" style="position: relative;">
+                <button class="btn btn-primary" onclick="generateCode(event)">
+                    JavaScript生成
+                </button>
+                <div id="toast" class="toast">生成完了!</div>
+            </div>
+        </div>
+
+        <!-- 生成コードカード -->
+        <div class="card">
+            <div class="card-title">
+                <span class="icon">💻</span>
+                生成されたJavaScript（Robo-Pat用）
+            </div>
+
+            <div class="info-box" style="margin-bottom: 12px;">
+                <strong>使い方:</strong>
+                Robo-Patで入力変数にテキストを格納 → このJavaScriptを実行 → 出力変数から結果を取得
+            </div>
+
+            <div class="code-output">
+                <button class="copy-btn" onclick="copyCode('main')">コピー</button>
+                <pre id="code-main">// 設定を入力して「JavaScript生成」ボタンをクリックしてください</pre>
+            </div>
+
+            <div class="info-box warning" style="margin-top: 16px;">
+                <strong>Robo-Patでの使用手順:</strong><br>
+                1. 「文字列取得」等で対象テキストを変数に格納<br>
+                2. 上記JavaScriptを「JavaScript実行」コマンドで実行<br>
+                3. 結果（戻り値）が指定した変数に格納されます
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // プレースホルダー風入力欄の初期化
+        function initPlaceholderInputs() {
+            const inputs = document.querySelectorAll('.placeholder-input input');
+
+            inputs.forEach(input => {
+                const placeholder = input.dataset.placeholder;
+                input.value = placeholder;
+                input.classList.add('is-placeholder');
+
+                input.addEventListener('focus', function() {
+                    if (this.classList.contains('is-placeholder')) {
+                        this.value = '';
+                        this.classList.remove('is-placeholder');
+                    }
+                });
+
+                input.addEventListener('blur', function() {
+                    if (this.value === '') {
+                        this.value = this.dataset.placeholder;
+                        this.classList.add('is-placeholder');
+                    }
+                });
+
+                input.addEventListener('input', function() {
+                    this.classList.remove('is-placeholder');
+                });
+            });
+        }
+
+        // 実際の値を取得
+        function getInputValue(inputId) {
+            const input = document.getElementById(inputId);
+            if (input.classList.contains('is-placeholder')) {
+                return input.dataset.placeholder;
+            }
+            return input.value;
+        }
+
+        // タブ切り替え
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // 文字列をエスケープ
+        function escapeString(str) {
+            return str
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r')
+                .replace(/\t/g, '\\t');
+        }
+
+        // 正規表現用にエスケープ
+        function escapeRegex(str) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // コード生成
+        function generateCode() {
+            const stringA = getInputValue('stringA');
+            const stringB = getInputValue('stringB');
+            const inputVarName = getInputValue('inputVarName');
+            const outputVarName = getInputValue('variableName');
+
+            if (!stringA || !stringB) {
+                alert('開始文字列と終了文字列を入力してください');
+                return;
+            }
+
+            const escapedA = escapeString(stringA);
+            const escapedB = escapeString(stringB);
+
+            // 変数名をエスケープ（vars['変数名']形式で使用するため）
+            const escapedInputVar = escapeString(inputVarName);
+
+            // メインコード: Robo-Pat変数から抽出
+            // Robo-Patでは vars['変数名'] でアクセス、結果は最後の式の値が返る
+            const mainCode = `// Robo-Pat用: 変数「${inputVarName}」から「${stringA}」～「${stringB}」間を抽出
+// 入力: vars['${escapedInputVar}']
+// 出力: 最後の式の値（抽出結果）がRobo-Pat変数に格納されます
+// ※ダブルクオーテーション、カンマ、改行は自動除去
+
+(function() {
+    var inputText = vars['${escapedInputVar}'];
+    if (!inputText) { return ''; }
+
+    var startMarker = '${escapedA}';
+    var endMarker = '${escapedB}';
+
+    var startIndex = inputText.indexOf(startMarker);
+    if (startIndex === -1) { return ''; }
+
+    var contentStart = startIndex + startMarker.length;
+    var endIndex = inputText.indexOf(endMarker, contentStart);
+    if (endIndex === -1) { return ''; }
+
+    var result = inputText.substring(contentStart, endIndex);
+
+    // 不要文字を除去: ダブルクオーテーション、カンマ、改行（実際の改行と文字列リテラル両方）
+    result = result.replace(/"/g, '').replace(/,/g, '').replace(/\\n/g, '').replace(/\\r/g, '').replace('\\\\n', '').replace('\\\\r', '');
+
+    return result;
+})();`;
+
+            // コードを表示
+            document.getElementById('code-main').textContent = mainCode;
+
+            // info-boxの変数名も更新
+            const infoBox = document.querySelector('.info-box.warning');
+            if (infoBox) {
+                infoBox.innerHTML = `<strong>Robo-Patでの使用手順:</strong><br>
+                1. 「文字列取得」等で対象テキストを変数 <code>${escapeHtml(inputVarName)}</code> に格納<br>
+                2. 上記JavaScriptを「JavaScript実行」コマンドで実行<br>
+                3. 結果（戻り値）が指定した変数に格納されます`;
+            }
+
+            // 生成完了通知を表示
+            showToast();
+        }
+
+        // トースト通知を表示（ボタンの右側に表示）
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.left = '180px';
+            toast.style.top = '0';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // HTMLエスケープ
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+                .replace(/\n/g, '<br>');
+        }
+
+        // コピー機能
+        function copyCode(type) {
+            const codeEl = document.getElementById(`code-${type}`);
+            const code = codeEl.textContent;
+
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = codeEl.parentElement.querySelector('.copy-btn');
+                btn.textContent = 'コピー完了!';
+                btn.classList.add('copied');
+
+                setTimeout(() => {
+                    btn.textContent = 'コピー';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // 初期化
+        initPlaceholderInputs();
+    </script>
+</body>
+</html>
